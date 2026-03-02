@@ -15,10 +15,9 @@ const translations = {
         heating: 'ISITISH',
         intHumidity: 'Ichki namlik',
         extTemp: 'Tashqi harorat',
-        mode: 'Rejim',
-        fan: 'Parrak',
-        timer: 'Taymer',
-        data: "Ma'lumot"
+        family: 'Oilaviy',
+        devicesTitle: 'Qurilmalar',
+        offline: 'Oflayn',
     },
     ru: {
         livingRoom: 'Гостиная',
@@ -26,10 +25,9 @@ const translations = {
         heating: 'НАГРЕВ',
         intHumidity: 'Влажность',
         extTemp: 'Улич. темп.',
-        mode: 'Режим',
-        fan: 'Вент.',
-        timer: 'Таймер',
-        data: 'Данные'
+        family: 'Семья',
+        devicesTitle: 'Устройства',
+        offline: 'Офлайн',
     }
 };
 
@@ -109,13 +107,35 @@ export default function HomeScreen() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
+                {/* Family Section */}
+                <View style={styles.sectionHeader}>
+                    <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.family}</Text>
+                </View>
+                <View style={styles.familyRow}>
+                    <View style={styles.avatarContainer}>
+                        <Image source={{ uri: 'https://i.pravatar.cc/150?u=a042581f4e29026024d' }} style={styles.avatar} />
+                        <View style={[styles.onlineDot, { backgroundColor: theme.ecoGreen }]} />
+                    </View>
+                    <View style={styles.avatarContainer}>
+                        <Image source={{ uri: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }} style={styles.avatar} />
+                        <View style={[styles.onlineDot, { backgroundColor: theme.ecoGreen }]} />
+                    </View>
+                    <View style={styles.avatarContainer}>
+                        <Image source={{ uri: 'https://i.pravatar.cc/150?u=a04258114e29026302d' }} style={styles.avatar} />
+                        <View style={[styles.onlineDot, { backgroundColor: theme.textSecondary }]} />
+                    </View>
+                    <TouchableOpacity style={[styles.avatarAdd, { borderColor: theme.textSecondary }]}>
+                        <Ionicons name="add" size={24} color={theme.textSecondary} />
+                    </TouchableOpacity>
+                </View>
+
                 {/* Asosiy Konditsioner Dial */}
                 <View style={styles.centerCard}>
                     <ThermostatDial
                         size={320}
                         status="Heating"
                         initialTemp={devices['tuya_climate_1']?.settings?.temp || 22}
-                        statusText={t.heating}
+                        statusText={devices['tuya_climate_1'] ? t.heating : t.offline}
                         roomText={t.livingRoom}
                         onTempChange={(temp: number) => {
                             sendDeviceCommand('tuya_climate_1', { temp });
@@ -126,32 +146,60 @@ export default function HomeScreen() {
                 {/* Info Cards (Humidity & Temp) */}
                 <View style={styles.infoRow}>
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
-                        <Ionicons name="water-outline" size={24} color={theme.accentWarm} />
-                        <View style={{ marginLeft: 12 }}>
-                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '500' }}>{t.intHumidity}</Text>
-                            <Text style={{ fontSize: 18, color: theme.textPrimary, fontWeight: '700' }}>42%</Text>
+                        <Ionicons name="water" size={28} color="#00B4DB" />
+                        <View style={{ marginLeft: 15 }}>
+                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }}>{t.intHumidity}</Text>
+                            <Text style={{ fontSize: 24, color: theme.textPrimary, fontWeight: '800' }}>42%</Text>
                         </View>
                     </View>
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
-                        <Ionicons name="thermometer-outline" size={24} color={theme.accentWarm} />
-                        <View style={{ marginLeft: 12 }}>
-                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '500' }}>{t.extTemp}</Text>
-                            <Text style={{ fontSize: 18, color: theme.textPrimary, fontWeight: '700' }}>14°C</Text>
+                        <Ionicons name="partly-sunny" size={28} color="#f2a65a" />
+                        <View style={{ marginLeft: 15 }}>
+                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }}>{t.extTemp}</Text>
+                            <Text style={{ fontSize: 24, color: theme.textPrimary, fontWeight: '800' }}>14°C</Text>
                         </View>
                     </View>
                 </View>
 
-                {/* 4 dumaloq kontrollerlar */}
-                <View style={styles.devicesRow}>
-                    <DeviceButton
-                        icon="options-outline"
-                        name={t.mode}
-                        isActive={devices['tuya_plug_1']?.isOn}
-                        onPress={(state) => sendDeviceCommand('tuya_plug_1', { turnOn: state })}
-                    />
-                    <DeviceButton icon="snow-outline" name={t.fan} />
-                    <DeviceButton icon="timer-outline" name={t.timer} />
-                    <DeviceButton icon="stats-chart-outline" name={t.data} />
+                {/* Haqiqiy Qurilmalar Boshqaruvi */}
+                <View style={[styles.sectionHeader, { marginTop: 10 }]}>
+                    <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.devicesTitle}</Text>
+                </View>
+                <View style={styles.devicesList}>
+                    {Object.values(devices)
+                        .filter((d: any) => d.type !== 'CLIMATE') // Termostat tepadagisi, bu erda faqat chiroq/rozetka
+                        .map((device: any) => (
+                            <TouchableOpacity
+                                key={device.id}
+                                activeOpacity={0.7}
+                                onPress={() => {
+                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                    sendDeviceCommand(device.id, { turnOn: !device.isOn });
+                                }}
+                                style={[
+                                    styles.deviceItem,
+                                    { backgroundColor: theme.surface },
+                                    device.isOn && { borderColor: theme.primary, borderWidth: 1 }
+                                ]}
+                            >
+                                <View style={[styles.deviceIconBg, { backgroundColor: device.isOn ? theme.primary + '20' : theme.background }]}>
+                                    <Ionicons
+                                        name={device.type === 'LIGHT' ? 'bulb' : 'power'}
+                                        size={24}
+                                        color={device.isOn ? theme.primary : theme.textSecondary}
+                                    />
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={[styles.deviceName, { color: theme.textPrimary }]}>{device.name}</Text>
+                                    <Text style={{ color: device.isOn ? theme.ecoGreen : theme.textSecondary, fontSize: 13, fontWeight: '600' }}>
+                                        {device.isOn ? 'ON' : 'OFF'}
+                                    </Text>
+                                </View>
+                                <View style={[styles.toggleSwitch, { backgroundColor: device.isOn ? theme.primary : theme.background }]}>
+                                    <View style={[styles.toggleKnob, device.isOn ? { transform: [{ translateX: 20 }] } : null]} />
+                                </View>
+                            </TouchableOpacity>
+                        ))}
                 </View>
 
             </ScrollView>
@@ -236,18 +284,104 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 20,
+        borderRadius: 24,
+        shadowColor: 'rgba(0,0,0,0.1)',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 1,
+        shadowRadius: 20,
+        elevation: 5,
+    },
+    sectionHeader: {
+        marginBottom: 15,
+        marginTop: -10,
+    },
+    sectionTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 1.5,
+    },
+    familyRow: {
+        flexDirection: 'row',
+        gap: 15,
+        marginBottom: 10,
+    },
+    avatarContainer: {
+        position: 'relative',
+    },
+    avatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        borderWidth: 2,
+        borderColor: 'rgba(255,255,255,0.1)',
+    },
+    onlineDot: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        position: 'absolute',
+        bottom: 2,
+        right: 2,
+        borderWidth: 2,
+        borderColor: '#1e1e24',
+    },
+    avatarAdd: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        borderWidth: 1,
+        borderStyle: 'dashed',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    devicesList: {
+        gap: 15,
+    },
+    deviceItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
         padding: 16,
         borderRadius: 20,
-        shadowColor: 'rgba(0,0,0,0.05)',
-        shadowOffset: { width: 0, height: 4 },
+        shadowColor: 'rgba(0,0,0,0.1)',
+        shadowOffset: { width: 0, height: 6 },
         shadowOpacity: 1,
-        shadowRadius: 10,
-        elevation: 2,
+        shadowRadius: 15,
+        elevation: 4,
+        borderWidth: 1,
+        borderColor: 'transparent',
     },
-    devicesRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingHorizontal: 10,
+    deviceIconBg: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    deviceName: {
+        fontSize: 17,
+        fontWeight: '700',
+        marginBottom: 4,
+    },
+    toggleSwitch: {
+        width: 50,
+        height: 30,
+        borderRadius: 15,
+        padding: 3,
+        justifyContent: 'center',
+    },
+    toggleKnob: {
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#FFF',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 2,
     },
     micContainer: {
         position: 'absolute',
