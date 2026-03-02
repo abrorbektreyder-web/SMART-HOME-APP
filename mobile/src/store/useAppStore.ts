@@ -19,11 +19,15 @@ interface AppState {
   socket: Socket | null;
   devices: Record<string, DeviceState>;
   isConnected: boolean;
+  isAuthenticated: boolean;
+  user: any | null;
   toggleTheme: () => void;
   setLanguage: (lang: 'uz' | 'ru') => void;
   initSocket: () => void;
   updateDeviceState: (deviceId: string, update: Partial<DeviceState>) => void;
   sendDeviceCommand: (deviceId: string, command: any) => void;
+  login: (phone: string, token: string) => void;
+  logout: () => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -37,6 +41,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     "tuya_plug_1": { id: "tuya_plug_1", name: "Muzlatgich", type: "PLUG", isOn: true, settings: {} },
   },
   isConnected: false,
+  isAuthenticated: false,
+  user: null,
+
+  login: (phone, token) => set({ isAuthenticated: true, user: { phone, token } }),
+  logout: () => set({ isAuthenticated: false, user: null }),
 
   toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
   setLanguage: (lang) => set({ language: lang }),
