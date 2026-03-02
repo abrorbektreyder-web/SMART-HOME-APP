@@ -51,7 +51,7 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
                 const dy = gestureState.dy;
                 const moveDist = dx - dy;
 
-                const tempChange = Math.round(moveDist / 15); // Maximum smoothness 15 multiplier!
+                const tempChange = Math.round(moveDist / 30); // Maximum smoothness 30 multiplier!
                 let newTemp = currentTempRef.current + tempChange;
 
                 if (newTemp > maxTemp) newTemp = maxTemp;
