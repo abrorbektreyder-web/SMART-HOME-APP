@@ -8,7 +8,6 @@ import { DeviceButton } from '../src/components/DeviceButton';
 import { useAppStore } from '../src/store/useAppStore';
 import { colors } from '../src/theme/colors';
 
-// Bosh qism (Dashboard datchiklari UI)
 export default function HomeScreen() {
     const router = useRouter();
     const themeMode = useAppStore((state: any) => state.theme);
@@ -17,7 +16,7 @@ export default function HomeScreen() {
 
     const handleMicPress = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        // Masalan, ovozli asistentni ochish uchun logika
+        // Ovozli boshqaruv effekti
     };
 
     const navToRooms = () => {
@@ -27,6 +26,7 @@ export default function HomeScreen() {
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
+            {/* Header qismi */}
             <View style={styles.header}>
                 <View style={styles.userInfo}>
                     <Text style={[styles.title, { color: theme.textPrimary }]}>HOYR Home</Text>
@@ -35,6 +35,7 @@ export default function HomeScreen() {
                     </TouchableOpacity>
                 </View>
 
+                {/* Theme Switcher Button */}
                 <TouchableOpacity onPress={() => {
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                     toggleTheme();
@@ -49,25 +50,28 @@ export default function HomeScreen() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                {/* 2. Thermostat Dial (Heating / Cooling UI) */}
+                {/* Asosiy konditsioner / thermostat (ENDI ISHLAYDI: DRAG QILING) */}
                 <View style={styles.centerCard}>
                     <ThermostatDial
-                        size={260}
-                        initialTemp={22}
+                        size={300}
                         status="Heating"
-                        onTempChange={() => Haptics.selectionAsync()}
+                        initialTemp={22}
                     />
                 </View>
 
-                {/* 3. Device Quick Actions (Tugmalar ro'yxati) */}
-                <View style={styles.row}>
+                <Text style={{ fontSize: 18, color: theme.textPrimary, fontWeight: 'bold', marginBottom: 15 }}>Tezkor qurilmalar</Text>
+
+                {/* Horizontal Scroll - Qurilmalar sig'may qolsa bemalol surish (scroll) mumkin */}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalRow}>
                     <DeviceButton icon="💡" name="Chiroqlar" />
                     <DeviceButton icon="🔌" name="Rozetkalar" isActive={true} />
                     <DeviceButton icon="🎥" name="Kameralar" />
-                </View>
+                    <DeviceButton icon="❄️" name="Konditsioner" />
+                    <DeviceButton icon="📺" name="Televizor" />
+                </ScrollView>
             </ScrollView>
 
-            {/* 4. Mic Premium Button (Voice First Falsafasi) */}
+            {/* Pastki markaziy Premium qizil mikrafon */}
             <View style={styles.micContainer}>
                 <TouchableOpacity
                     onPress={handleMicPress}
@@ -95,7 +99,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         paddingHorizontal: 24,
-        paddingBottom: 120, // Bottom padding to prevent overlap with mic button
+        paddingBottom: 120, // Mikrafon qisib qolmasligi uchun pastida joy
     },
     userInfo: {
         flexDirection: 'column',
@@ -110,25 +114,25 @@ const styles = StyleSheet.create({
     },
     centerCard: {
         alignItems: 'center',
-        marginBottom: 50,
+        marginBottom: 40,
         marginTop: 10,
     },
-    row: {
+    horizontalRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        paddingVertical: 10,
+        gap: 15,
     },
     micContainer: {
         position: 'absolute',
-        bottom: 40,
+        bottom: 30, // Pastdan biroz balandroq
         left: 0,
         right: 0,
         alignItems: 'center',
     },
     micButton: {
-        width: 90,
-        height: 90,
-        borderRadius: 45,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         justifyContent: 'center',
         alignItems: 'center',
         shadowOffset: { width: 0, height: 10 },
