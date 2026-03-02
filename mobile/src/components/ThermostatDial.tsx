@@ -13,6 +13,7 @@ interface ThermostatDialProps {
     status: 'Heating' | 'Cooling' | 'Eco' | 'Off';
     statusText: string;
     roomText: string;
+    onTempChange?: (temp: number) => void;
 }
 
 export const ThermostatDial: React.FC<ThermostatDialProps> = ({
@@ -23,6 +24,7 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
     status = 'Heating',
     statusText,
     roomText,
+    onTempChange,
 }) => {
     const [temp, setTemp] = useState(initialTemp);
     const themeMode = useAppStore((state: any) => state.theme);
@@ -57,6 +59,9 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
             onPanResponderRelease: () => {
                 currentTempRef.current = temp;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                if (onTempChange) {
+                    onTempChange(temp);
+                }
             }
         })
     ).current;

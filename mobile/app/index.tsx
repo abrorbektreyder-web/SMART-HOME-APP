@@ -40,11 +40,26 @@ export default function HomeScreen() {
     const toggleTheme = useAppStore((state: any) => state.toggleTheme);
     const setLanguage = useAppStore((state: any) => state.setLanguage);
 
+    // WebSockets va Qurilmalar holati
+    const initSocket = useAppStore((state: any) => state.initSocket);
+    const devices = useAppStore((state: any) => state.devices);
+    const sendDeviceCommand = useAppStore((state: any) => state.sendDeviceCommand);
+
+    React.useEffect(() => {
+        initSocket();
+    }, []);
+
     const theme = colors[themeMode as 'light' | 'dark'];
     const t = translations[language as 'uz' | 'ru'];
 
     const handleMicPress = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+        // Asosiy chiroq ustida amaliyot (mock Tuya LIGHT)
+        const light = devices['tuya_light_1'];
+        if (light) {
+            sendDeviceCommand('tuya_light_1', { turnOn: !light.isOn });
+        }
     };
 
     const navToRooms = () => {
@@ -99,9 +114,12 @@ export default function HomeScreen() {
                     <ThermostatDial
                         size={320}
                         status="Heating"
-                        initialTemp={22}
+                        initialTemp={devices['tuya_climate_1']?.settings?.temp || 22}
                         statusText={t.heating}
                         roomText={t.livingRoom}
+                        onTempChange={(temp: number) => {
+                            sendDeviceCommand('tuya_climate_1', { temp });
+                        }}
                     />
                 </View>
 
@@ -125,7 +143,12 @@ export default function HomeScreen() {
 
                 {/* 4 dumaloq kontrollerlar */}
                 <View style={styles.devicesRow}>
-                    <DeviceButton icon="options-outline" name={t.mode} isActive={true} />
+                    <DeviceButton
+                        icon="options-outline"
+                        name={t.mode}
+                        isActive={devices['tuya_plug_1']?.isOn}
+                        onPress={(state) => sendDeviceCommand('tuya_plug_1', { turnOn: state })}
+                    />
                     <DeviceButton icon="snow-outline" name={t.fan} />
                     <DeviceButton icon="timer-outline" name={t.timer} />
                     <DeviceButton icon="stats-chart-outline" name={t.data} />
@@ -140,7 +163,10 @@ export default function HomeScreen() {
                     activeOpacity={0.8}
                     style={[
                         styles.micButton,
-                        { backgroundColor: theme.primary, shadowColor: theme.primary }
+                        {
+                            backgroundColor: devices['tuya_light_1']?.isOn ? theme.ecoGreen : theme.primary,
+                            shadowColor: devices['tuya_light_1']?.isOn ? theme.ecoGreen : theme.primary
+                        }
                     ]}
                 >
                     <Ionicons name="mic" size={28} color="#ffffff" />

@@ -42,13 +42,16 @@ export class AppGateway {
     // Real time buyruqni qabul qilish va barcha qurilmalarga tarqatish
     @SubscribeMessage('toggle_device')
     async handleToggleDevice(
-        @MessageBody() payload: { deviceId: string; turnOn: boolean },
+        @MessageBody() payload: { deviceId: string; turnOn?: boolean; temp?: number },
         @ConnectedSocket() client: Socket,
     ) {
-        this.logger.log(`Toggle Device Requested via WS: ${payload.deviceId}`);
+        this.logger.log(`Toggle Device Requested via WS: ${payload.deviceId} - data: ${JSON.stringify(payload)}`);
 
         // DB ni va Tuya Service ni yangilaymiz
-        const updatedDevice = await this.tuyaService.sendCommand(payload.deviceId, { turnOn: payload.turnOn });
+        const updatedDevice = await this.tuyaService.sendCommand(payload.deviceId, {
+            turnOn: payload.turnOn,
+            temp: payload.temp
+        });
 
         // O'zgarish bo'lganini hamma ulanganlarga aytamiz (real-time UI update)
         this.server.emit('device_state_changed', updatedDevice);
