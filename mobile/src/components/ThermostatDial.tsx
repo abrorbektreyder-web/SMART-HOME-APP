@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
-import { useAppStore } from '../../store/useAppStore';
-import { colors } from '../../theme/colors';
+import { useAppStore } from '../store/useAppStore';
+import { colors } from '../theme/colors';
 
 interface ThermostatDialProps {
     size?: number;
@@ -22,8 +22,8 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
     status = 'Heating',
 }) => {
     const [temp, setTemp] = useState(initialTemp);
-    const themeMode = useAppStore(state => state.theme);
-    const theme = colors[themeMode];
+    const themeMode = useAppStore((state: any) => state.theme);
+    const theme = colors[themeMode as 'light' | 'dark'];
 
     const strokeWidth = 14;
     const radius = (size - strokeWidth) / 2;
