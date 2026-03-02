@@ -144,19 +144,23 @@ export default function HomeScreen() {
                 </View>
 
                 {/* Info Cards (Humidity & Temp) */}
-                <View style={styles.infoRow}>
+                <View style={[styles.infoRow, { alignItems: 'stretch' }]}>
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
                         <Ionicons name="water" size={28} color="#00B4DB" />
-                        <View style={{ flex: 1, marginLeft: 10 }}>
-                            <Text style={{ fontSize: 11, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }} numberOfLines={1} adjustsFontSizeToFit>{t.intHumidity}</Text>
-                            <Text style={{ fontSize: 22, color: theme.textPrimary, fontWeight: '800' }}>42%</Text>
+                        <View style={{ flex: 1, marginLeft: 10, justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 10, color: theme.textSecondary, fontWeight: '700', textTransform: 'uppercase', lineHeight: 14 }} numberOfLines={2}>
+                                {t.intHumidity}
+                            </Text>
+                            <Text style={{ fontSize: 24, color: theme.textPrimary, fontWeight: '800', marginTop: 2 }}>42%</Text>
                         </View>
                     </View>
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
                         <Ionicons name="partly-sunny" size={28} color="#f2a65a" />
-                        <View style={{ flex: 1, marginLeft: 10 }}>
-                            <Text style={{ fontSize: 11, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }} numberOfLines={1} adjustsFontSizeToFit>{t.extTemp}</Text>
-                            <Text style={{ fontSize: 22, color: theme.textPrimary, fontWeight: '800' }}>14°C</Text>
+                        <View style={{ flex: 1, marginLeft: 10, justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 10, color: theme.textSecondary, fontWeight: '700', textTransform: 'uppercase', lineHeight: 14 }} numberOfLines={2}>
+                                {t.extTemp}
+                            </Text>
+                            <Text style={{ fontSize: 24, color: theme.textPrimary, fontWeight: '800', marginTop: 2 }}>14°C</Text>
                         </View>
                     </View>
                 </View>
@@ -278,13 +282,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 30,
-        gap: 12,
+        gap: 10,  // biroz kamroq bo'sh joy qoldirdim
     },
     infoCard: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 14,
+        paddingVertical: 14,
+        paddingHorizontal: 12,
         borderRadius: 22,
         shadowColor: 'rgba(0,0,0,0.1)',
         shadowOffset: { width: 0, height: 10 },
@@ -294,7 +299,7 @@ const styles = StyleSheet.create({
     },
     sectionHeader: {
         marginBottom: 15,
-        marginTop: 5,
+        marginTop: 15,
     },
     sectionTitle: {
         fontSize: 14,
