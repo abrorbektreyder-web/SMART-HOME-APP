@@ -82,7 +82,7 @@ export default function LoginScreen() {
                             {/* Input Neumorphic Container */}
                             <Text style={[styles.label, { color: theme.textSecondary }]}>{t.phoneLabel}</Text>
                             <View style={[styles.inputContainer, { backgroundColor: theme.background }]}>
-                                <View style={[styles.innerShadow, { backgroundColor: 'transparent' }]} />
+                                <View style={[styles.innerShadow, { backgroundColor: 'transparent' }]} pointerEvents="none" />
                                 <TextInput
                                     style={[styles.input, { color: theme.textPrimary }]}
                                     value={phone}
@@ -102,7 +102,7 @@ export default function LoginScreen() {
                         <>
                             <Text style={[styles.label, { color: theme.textSecondary }]}>{t.codeLabel}</Text>
                             <View style={[styles.inputContainer, { backgroundColor: theme.background }]}>
-                                <View style={[styles.innerShadow, { backgroundColor: 'transparent' }]} />
+                                <View style={[styles.innerShadow, { backgroundColor: 'transparent' }]} pointerEvents="none" />
                                 <TextInput
                                     style={[styles.input, { color: theme.textPrimary, letterSpacing: 10, textAlign: 'center' }]}
                                     value={code}
