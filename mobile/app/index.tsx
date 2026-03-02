@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ThermostatDial } from '../src/components/ThermostatDial';
@@ -49,6 +49,7 @@ export default function HomeScreen() {
         { avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d', online: true },
         { avatar: 'https://i.pravatar.cc/150?u=a04258114e29026302d', online: false },
     ]);
+    const [isListening, setIsListening] = React.useState(false);
 
     React.useEffect(() => {
         initSocket();
@@ -84,10 +85,63 @@ export default function HomeScreen() {
     const handleMicPress = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-        // Asosiy chiroq ustida amaliyot (mock Tuya LIGHT)
-        const light = devices['tuya_light_1'];
-        if (light) {
-            sendDeviceCommand('tuya_light_1', { turnOn: !light.isOn });
+        if (Platform.OS === 'web') {
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+            if (SpeechRecognition) {
+                if (isListening) return;
+
+                const recognition = new SpeechRecognition();
+                recognition.lang = language === 'uz' ? 'uz-UZ' : 'ru-RU';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = () => {
+                    setIsListening(true);
+                };
+
+                recognition.onresult = (event: any) => {
+                    const transcript = event.results[0][0].transcript.toLowerCase();
+                    console.log('Eshitdim:', transcript);
+
+                    // Oddiy buyruqlar tahlili:
+                    if (transcript.includes('chiroq') || transcript.includes('свет') || transcript.includes('oshxona')) {
+                        if (transcript.includes('yoq') || transcript.includes('включ')) {
+                            sendDeviceCommand('tuya_light_1', { turnOn: true });
+                        } else if (transcript.includes('o\'chir') || transcript.includes('o’chir') || transcript.includes('ochir') || transcript.includes('выключ')) {
+                            sendDeviceCommand('tuya_light_1', { turnOn: false });
+                        } else {
+                            const light = devices['tuya_light_1'];
+                            if (light) sendDeviceCommand('tuya_light_1', { turnOn: !light.isOn });
+                        }
+                    } else if (transcript.includes('muzlatkich') || transcript.includes('muzlatgich') || transcript.includes('холодильник')) {
+                        if (transcript.includes('yoq') || transcript.includes('включ')) {
+                            sendDeviceCommand('tuya_plug_1', { turnOn: true });
+                        } else if (transcript.includes('o\'chir') || transcript.includes('o’chir') || transcript.includes('ochir') || transcript.includes('выключ')) {
+                            sendDeviceCommand('tuya_plug_1', { turnOn: false });
+                        } else {
+                            const plug = devices['tuya_plug_1'];
+                            if (plug) sendDeviceCommand('tuya_plug_1', { turnOn: !plug.isOn });
+                        }
+                    }
+
+                    setIsListening(false);
+                };
+
+                recognition.onerror = (event: any) => {
+                    console.error('Speech error:', event.error);
+                    setIsListening(false);
+                };
+
+                recognition.onend = () => {
+                    setIsListening(false);
+                };
+
+                recognition.start();
+            } else {
+                alert(t.offline);
+            }
+        } else {
+            alert(language === 'uz' ? "Ovozli boshqaruv hozir faqat Web versiyada ishlaydi." : "Голосовое управление пока работает только в Web версии.");
         }
     };
 
@@ -241,12 +295,13 @@ export default function HomeScreen() {
                     style={[
                         styles.micButton,
                         {
-                            backgroundColor: devices['tuya_light_1']?.isOn ? theme.ecoGreen : theme.primary,
-                            shadowColor: devices['tuya_light_1']?.isOn ? theme.ecoGreen : theme.primary
+                            backgroundColor: isListening ? theme.ecoGreen : theme.primary,
+                            shadowColor: isListening ? theme.ecoGreen : theme.primary,
+                            transform: [{ scale: isListening ? 1.1 : 1 }]
                         }
                     ]}
                 >
-                    <Ionicons name="mic" size={28} color="#ffffff" />
+                    <Ionicons name={isListening ? "mic" : "mic-outline"} size={28} color="#ffffff" />
                 </TouchableOpacity>
             </View>
         </View>
