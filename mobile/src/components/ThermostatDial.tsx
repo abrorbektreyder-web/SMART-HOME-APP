@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, PanResponder } from 'react-native';
+import { View, StyleSheet, Text, PanResponder, TouchableOpacity } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { useAppStore } from '../store/useAppStore';
 import { colors } from '../theme/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface ThermostatDialProps {
     size?: number;
@@ -39,31 +40,18 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
 
     const panResponder = useRef(
         PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
+            onStartShouldSetPanResponder: () => false,
+            onMoveShouldSetPanResponder: (evt, gestureState) => Math.abs(gestureState.dx) > 3 || Math.abs(gestureState.dy) > 3,
             onPanResponderGrant: (evt) => {
                 currentTempRef.current = temp;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
             onPanResponderMove: (evt, gestureState) => {
-                // Calculate position relative to center of the component
-                const { moveX, moveY } = gestureState;
-                const { x0, y0 } = gestureState;
-
-                // Note: accurate center calculation would require exact view measurement via onLayout, 
-                // but for a standalone component we approximate touch start position vs gesture delta
-
-                // But a direct circular approach by pure delta angle is hard without container offset.
-                // We'll calculate angle relative to Touch Start as center: NO, better to assume center of view.
-
-                // Using a simpler vertical/horizontal combined drag delta 
-                // Going up or right = increase temp. Going down or left = decrease temp.
                 const dx = gestureState.dx;
                 const dy = gestureState.dy;
-
-                // Combining the movement distances
                 const moveDist = dx - dy;
 
-                const tempChange = Math.round(moveDist / 12); // Reduced sensitivity for smoother dragging
+                const tempChange = Math.round(moveDist / 15); // Maximum smoothness 15 multiplier!
                 let newTemp = currentTempRef.current + tempChange;
 
                 if (newTemp > maxTemp) newTemp = maxTemp;
@@ -82,6 +70,20 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
             }
         })
     ).current;
+
+    const handleButtonPress = (change: number) => {
+        let newTemp = temp + change;
+        if (newTemp > maxTemp) newTemp = maxTemp;
+        if (newTemp < minTemp) newTemp = minTemp;
+
+        if (newTemp !== temp) {
+            setTemp(newTemp);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            if (onTempChange) {
+                onTempChange(newTemp);
+            }
+        }
+    };
 
     useEffect(() => {
         if (temp !== initialTemp) {
@@ -148,9 +150,21 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
                 <Text style={[styles.statusText, { color: theme.primary }]}>
                     {statusText.toUpperCase()}
                 </Text>
-                <Text style={[styles.tempText, { color: theme.textPrimary }]}>
-                    {temp}°
-                </Text>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => handleButtonPress(-1)} activeOpacity={0.6} hitSlop={20}>
+                        <Ionicons name="remove-circle-outline" size={32} color={theme.textSecondary} />
+                    </TouchableOpacity>
+
+                    <Text style={[styles.tempText, { color: theme.textPrimary, marginHorizontal: 15 }]}>
+                        {temp}°
+                    </Text>
+
+                    <TouchableOpacity onPress={() => handleButtonPress(1)} activeOpacity={0.6} hitSlop={20}>
+                        <Ionicons name="add-circle-outline" size={32} color={theme.textSecondary} />
+                    </TouchableOpacity>
+                </View>
+
                 <Text style={[styles.unitText, { color: theme.textSecondary }]}>
                     {roomText}
                 </Text>
