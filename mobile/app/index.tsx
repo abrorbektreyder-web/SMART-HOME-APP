@@ -147,16 +147,16 @@ export default function HomeScreen() {
                 <View style={styles.infoRow}>
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
                         <Ionicons name="water" size={28} color="#00B4DB" />
-                        <View style={{ marginLeft: 15 }}>
-                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }}>{t.intHumidity}</Text>
-                            <Text style={{ fontSize: 24, color: theme.textPrimary, fontWeight: '800' }}>42%</Text>
+                        <View style={{ flex: 1, marginLeft: 10 }}>
+                            <Text style={{ fontSize: 11, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }} numberOfLines={1} adjustsFontSizeToFit>{t.intHumidity}</Text>
+                            <Text style={{ fontSize: 22, color: theme.textPrimary, fontWeight: '800' }}>42%</Text>
                         </View>
                     </View>
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
                         <Ionicons name="partly-sunny" size={28} color="#f2a65a" />
-                        <View style={{ marginLeft: 15 }}>
-                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }}>{t.extTemp}</Text>
-                            <Text style={{ fontSize: 24, color: theme.textPrimary, fontWeight: '800' }}>14°C</Text>
+                        <View style={{ flex: 1, marginLeft: 10 }}>
+                            <Text style={{ fontSize: 11, color: theme.textSecondary, fontWeight: '600', textTransform: 'uppercase' }} numberOfLines={1} adjustsFontSizeToFit>{t.extTemp}</Text>
+                            <Text style={{ fontSize: 22, color: theme.textPrimary, fontWeight: '800' }}>14°C</Text>
                         </View>
                     </View>
                 </View>
@@ -272,20 +272,20 @@ const styles = StyleSheet.create({
     },
     centerCard: {
         alignItems: 'center',
-        marginVertical: 40,
+        marginVertical: 20,
     },
     infoRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 40,
-        gap: 15,
+        marginBottom: 30,
+        gap: 12,
     },
     infoCard: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 20,
-        borderRadius: 24,
+        padding: 14,
+        borderRadius: 22,
         shadowColor: 'rgba(0,0,0,0.1)',
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 1,
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     },
     sectionHeader: {
         marginBottom: 15,
-        marginTop: -10,
+        marginTop: 5,
     },
     sectionTitle: {
         fontSize: 14,
