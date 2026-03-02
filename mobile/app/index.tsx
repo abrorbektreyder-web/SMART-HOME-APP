@@ -7,6 +7,7 @@ import { DeviceButton } from '../src/components/DeviceButton';
 import { useAppStore } from '../src/store/useAppStore';
 import { colors } from '../src/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
 const translations = {
     uz: {
@@ -56,13 +57,28 @@ export default function HomeScreen() {
     const theme = colors[themeMode as 'light' | 'dark'];
     const t = translations[language as 'uz' | 'ru'];
 
-    const handleAddFamilyMember = () => {
+    const handleAddFamilyMember = async () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        const randomId = Math.random().toString(36).substring(7);
-        setFamilyMembers([
-            ...familyMembers,
-            { avatar: `https://i.pravatar.cc/150?u=${randomId}`, online: Math.random() > 0.5 }
-        ]);
+
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert(language === 'uz' ? "Rasm yuklash uchun ruxsat kerak!" : "Требуется разрешение на фото!");
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 0.5,
+        });
+
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setFamilyMembers([
+                ...familyMembers,
+                { avatar: result.assets[0].uri, online: true }
+            ]);
+        }
     };
 
     const handleMicPress = () => {

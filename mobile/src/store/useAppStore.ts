@@ -93,13 +93,13 @@ export const useAppStore = create<AppState>((set, get) => ({
     const socket = get().socket;
     if (socket && socket.connected) {
       socket.emit('toggle_device', { deviceId, ...command });
-      // Optimistic update
-      get().updateDeviceState(deviceId, {
-        isOn: command.turnOn !== undefined ? command.turnOn : get().devices[deviceId]?.isOn,
-        settings: command.temp !== undefined ? { ...get().devices[deviceId]?.settings, temp: command.temp } : get().devices[deviceId]?.settings
-      });
     } else {
-      console.warn('Socket ulanmagan!');
+      console.warn('Socket ulanmagan! Offline mode optimistic update');
     }
+    // Optimistic update should always run regardless of connection for UI responsiveness
+    get().updateDeviceState(deviceId, {
+      isOn: command.turnOn !== undefined ? command.turnOn : get().devices[deviceId]?.isOn,
+      settings: command.temp !== undefined ? { ...get().devices[deviceId]?.settings, temp: command.temp } : get().devices[deviceId]?.settings
+    });
   }
 }));
