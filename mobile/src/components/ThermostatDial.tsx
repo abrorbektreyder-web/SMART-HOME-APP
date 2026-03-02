@@ -11,6 +11,8 @@ interface ThermostatDialProps {
     minTemp?: number;
     maxTemp?: number;
     status: 'Heating' | 'Cooling' | 'Eco' | 'Off';
+    statusText: string;
+    roomText: string;
 }
 
 export const ThermostatDial: React.FC<ThermostatDialProps> = ({
@@ -19,6 +21,8 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
     minTemp = 16,
     maxTemp = 32,
     status = 'Heating',
+    statusText,
+    roomText,
 }) => {
     const [temp, setTemp] = useState(initialTemp);
     const themeMode = useAppStore((state: any) => state.theme);
@@ -120,13 +124,13 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
             {/* Inside Values */}
             <View style={styles.centerTextContainer}>
                 <Text style={[styles.statusText, { color: theme.primary }]}>
-                    HEATING
+                    {statusText.toUpperCase()}
                 </Text>
                 <Text style={[styles.tempText, { color: theme.textPrimary }]}>
                     {temp}°
                 </Text>
                 <Text style={[styles.unitText, { color: theme.textSecondary }]}>
-                    Living Room
+                    {roomText}
                 </Text>
             </View>
         </View>

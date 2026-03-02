@@ -13,18 +13,18 @@ export const colors = {
         shadowDark: '#cbd5e1', // Aura shadow
         border: '#e2e8f0',
     },
-    dark: { // Mapped to exactly match light so UI 1:1 holds regardless of device mode
-        background: '#f1f5f9',
-        surface: '#ffffff',
+    dark: {
+        background: '#0f172a', // Slate 900
+        surface: '#1e293b', // Slate 800
         primary: '#f43f5e',
-        primaryGlow: 'rgba(244, 63, 94, 0.4)',
-        textPrimary: '#0f172a',
-        textSecondary: '#64748b',
+        primaryGlow: 'rgba(244, 63, 94, 0.3)',
+        textPrimary: '#f8fafc', // Slate 50
+        textSecondary: '#94a3b8', // Slate 400
         accentWarm: '#f97316',
         accentCool: '#3B82F6',
         ecoGreen: '#10B981',
-        shadowLight: '#ffffff',
-        shadowDark: '#cbd5e1',
-        border: '#e2e8f0',
+        shadowLight: '#1e293b', // softer light in dark mode
+        shadowDark: '#020617', // dark slate
+        border: '#334155',
     }
 };

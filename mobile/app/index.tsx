@@ -8,10 +8,40 @@ import { useAppStore } from '../src/store/useAppStore';
 import { colors } from '../src/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 
+const translations = {
+    uz: {
+        livingRoom: 'Mehmonxona',
+        climate: 'Iqlim',
+        heating: 'ISITISH',
+        intHumidity: 'Ichki namlik',
+        extTemp: 'Tashqi harorat',
+        mode: 'Rejim',
+        fan: 'Parrak',
+        timer: 'Taymer',
+        data: "Ma'lumot"
+    },
+    ru: {
+        livingRoom: 'Гостиная',
+        climate: 'Климат',
+        heating: 'НАГРЕВ',
+        intHumidity: 'Влажность',
+        extTemp: 'Улич. темп.',
+        mode: 'Режим',
+        fan: 'Вент.',
+        timer: 'Таймер',
+        data: 'Данные'
+    }
+};
+
 export default function HomeScreen() {
     const router = useRouter();
     const themeMode = useAppStore((state: any) => state.theme);
+    const language = useAppStore((state: any) => state.language);
+    const toggleTheme = useAppStore((state: any) => state.toggleTheme);
+    const setLanguage = useAppStore((state: any) => state.setLanguage);
+
     const theme = colors[themeMode as 'light' | 'dark'];
+    const t = translations[language as 'uz' | 'ru'];
 
     const handleMicPress = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -20,6 +50,16 @@ export default function HomeScreen() {
     const navToRooms = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         router.push('/rooms');
+    };
+
+    const handleToggleTheme = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        toggleTheme();
+    };
+
+    const handleToggleLanguage = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setLanguage(language === 'uz' ? 'ru' : 'uz');
     };
 
     return (
@@ -31,13 +71,22 @@ export default function HomeScreen() {
                 </TouchableOpacity>
 
                 <View style={styles.headerTexts}>
-                    <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>Living Room</Text>
-                    <Text style={[styles.headerTitle, { color: theme.textPrimary }]}>Climate</Text>
+                    <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>{t.livingRoom}</Text>
+                    <Text style={[styles.headerTitle, { color: theme.textPrimary }]}>{t.climate}</Text>
                 </View>
 
-                {/* Dummy Avatar based on design */}
-                <View style={styles.avatar}>
-                    <Ionicons name="person-circle" size={44} color={theme.textSecondary} />
+                {/* Theme and Lang Toggles */}
+                <View style={styles.rightActions}>
+                    <TouchableOpacity onPress={handleToggleLanguage} style={styles.actionBtn}>
+                        <Text style={{ color: theme.textPrimary, fontWeight: '700', fontSize: 13 }}>{language.toUpperCase()}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleToggleTheme} style={styles.actionBtn}>
+                        <Ionicons
+                            name={themeMode === 'dark' ? 'moon' : 'sunny-outline'}
+                            size={24}
+                            color={theme.textPrimary}
+                        />
+                    </TouchableOpacity>
                 </View>
             </View>
 
@@ -51,6 +100,8 @@ export default function HomeScreen() {
                         size={320}
                         status="Heating"
                         initialTemp={22}
+                        statusText={t.heating}
+                        roomText={t.livingRoom}
                     />
                 </View>
 
@@ -59,14 +110,14 @@ export default function HomeScreen() {
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
                         <Ionicons name="water-outline" size={24} color={theme.accentWarm} />
                         <View style={{ marginLeft: 12 }}>
-                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '500' }}>Internal Humidity</Text>
+                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '500' }}>{t.intHumidity}</Text>
                             <Text style={{ fontSize: 18, color: theme.textPrimary, fontWeight: '700' }}>42%</Text>
                         </View>
                     </View>
                     <View style={[styles.infoCard, { backgroundColor: theme.surface }]}>
                         <Ionicons name="thermometer-outline" size={24} color={theme.accentWarm} />
                         <View style={{ marginLeft: 12 }}>
-                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '500' }}>External Temp</Text>
+                            <Text style={{ fontSize: 13, color: theme.textSecondary, fontWeight: '500' }}>{t.extTemp}</Text>
                             <Text style={{ fontSize: 18, color: theme.textPrimary, fontWeight: '700' }}>14°C</Text>
                         </View>
                     </View>
@@ -74,10 +125,10 @@ export default function HomeScreen() {
 
                 {/* 4 dumaloq kontrollerlar */}
                 <View style={styles.devicesRow}>
-                    <DeviceButton icon="options-outline" name="Mode" isActive={true} />
-                    <DeviceButton icon="snow-outline" name="Fan" />
-                    <DeviceButton icon="timer-outline" name="Timer" />
-                    <DeviceButton icon="stats-chart-outline" name="Data" />
+                    <DeviceButton icon="options-outline" name={t.mode} isActive={true} />
+                    <DeviceButton icon="snow-outline" name={t.fan} />
+                    <DeviceButton icon="timer-outline" name={t.timer} />
+                    <DeviceButton icon="stats-chart-outline" name={t.data} />
                 </View>
 
             </ScrollView>
@@ -128,11 +179,18 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: '700',
     },
-    avatar: {
-        width: 44,
-        height: 44,
+    rightActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    actionBtn: {
+        width: 38,
+        height: 38,
+        borderRadius: 19,
+        backgroundColor: 'rgba(0,0,0,0.03)',
         justifyContent: 'center',
-        alignItems: 'flex-end',
+        alignItems: 'center',
     },
     scrollContent: {
         paddingHorizontal: 24,
@@ -171,7 +229,6 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         alignItems: 'center',
-        // Oq container kesishishu go'zal bo'ladi
     },
     micButton: {
         width: 64,

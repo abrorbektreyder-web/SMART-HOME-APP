@@ -5,10 +5,39 @@ import * as Haptics from 'expo-haptics';
 import { useAppStore } from '../src/store/useAppStore';
 import { colors } from '../src/theme/colors';
 import { NeumorphicView } from '../src/components/NeumorphicView';
+import { Ionicons } from '@expo/vector-icons';
+
+const translations = {
+    uz: {
+        back: '← Ortga',
+        myRooms: 'Mening Xonalarim',
+        sensors: 'ta datchik',
+        roomsInfo: [
+            { id: 1, name: 'Asosiy Mehmonxona', emoji: '🛋️', count: 3 },
+            { id: 2, name: 'Oshxona', emoji: '🍳', count: 2 },
+            { id: 3, name: 'Yotoqxona', emoji: '🛏️', count: 4 },
+            { id: 4, name: 'Bolalar xonasi', emoji: '🧸', count: 1 },
+        ]
+    },
+    ru: {
+        back: '← Назад',
+        myRooms: 'Мои комнаты',
+        sensors: 'датчиков',
+        roomsInfo: [
+            { id: 1, name: 'Главная Гостиная', emoji: '🛋️', count: 3 },
+            { id: 2, name: 'Кухня', emoji: '🍳', count: 2 },
+            { id: 3, name: 'Спальня', emoji: '🛏️', count: 4 },
+            { id: 4, name: 'Детская', emoji: '🧸', count: 1 },
+        ]
+    }
+};
 
 export default function RoomsScreen() {
     const themeMode = useAppStore((state: any) => state.theme);
+    const language = useAppStore((state: any) => state.language);
     const theme = colors[themeMode as 'light' | 'dark'];
+    const t = translations[language as 'uz' | 'ru'];
+
     const router = useRouter();
 
     const goBack = () => {
@@ -16,24 +45,17 @@ export default function RoomsScreen() {
         router.back();
     };
 
-    const rooms = [
-        { id: 1, name: 'Asosiy Mehmonxona', emoji: '🛋️', count: 3 },
-        { id: 2, name: 'Oshxona', emoji: '🍳', count: 2 },
-        { id: 3, name: 'Yotoqxona', emoji: '🛏️', count: 4 },
-        { id: 4, name: 'Bolalar xonasi', emoji: '🧸', count: 1 },
-    ];
-
     return (
         <View style={{ flex: 1, backgroundColor: theme.background }}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={goBack} style={styles.backBtn}>
-                    <Text style={[styles.backText, { color: theme.primary }]}>← Ortga qaytish</Text>
+                    <Text style={[styles.backText, { color: theme.primary }]}>{t.back}</Text>
                 </TouchableOpacity>
-                <Text style={[styles.title, { color: theme.textPrimary }]}>Mening Xonalarim</Text>
+                <Text style={[styles.title, { color: theme.textPrimary }]}>{t.myRooms}</Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.grid}>
-                {rooms.map((room) => (
+                {t.roomsInfo.map((room) => (
                     <TouchableOpacity
                         key={room.id}
                         style={styles.roomWrapper}
@@ -46,9 +68,12 @@ export default function RoomsScreen() {
                                 <Text style={[styles.roomName, { color: theme.textPrimary }]}>
                                     {room.name}
                                 </Text>
-                                <Text style={[styles.deviceCount, { color: theme.primary }]}>
-                                    {room.count} ta datchik →
-                                </Text>
+                                <View style={styles.countWrapper}>
+                                    <Text style={[styles.deviceCount, { color: theme.primary }]}>
+                                        {room.count} {t.sensors}
+                                    </Text>
+                                    <Ionicons name="arrow-forward" size={16} color={theme.primary} />
+                                </View>
                             </View>
                         </NeumorphicView>
                     </TouchableOpacity>
@@ -61,7 +86,7 @@ export default function RoomsScreen() {
 const styles = StyleSheet.create({
     header: {
         paddingHorizontal: 24,
-        paddingTop: 60,
+        paddingTop: 65,
         paddingBottom: 20,
     },
     backBtn: {
@@ -99,6 +124,11 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: '600',
         marginBottom: 5,
+    },
+    countWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5,
     },
     deviceCount: {
         fontSize: 14,
