@@ -40,13 +40,30 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
-            onPanResponderGrant: () => {
+            onPanResponderGrant: (evt) => {
                 currentTempRef.current = temp;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
             onPanResponderMove: (evt, gestureState) => {
+                // Calculate position relative to center of the component
+                const { moveX, moveY } = gestureState;
+                const { x0, y0 } = gestureState;
+
+                // Note: accurate center calculation would require exact view measurement via onLayout, 
+                // but for a standalone component we approximate touch start position vs gesture delta
+
+                // But a direct circular approach by pure delta angle is hard without container offset.
+                // We'll calculate angle relative to Touch Start as center: NO, better to assume center of view.
+
+                // Using a simpler vertical/horizontal combined drag delta 
+                // Going up or right = increase temp. Going down or left = decrease temp.
+                const dx = gestureState.dx;
                 const dy = gestureState.dy;
-                const tempChange = Math.round(-dy / 8);
+
+                // Combining the movement distances
+                const moveDist = dx - dy;
+
+                const tempChange = Math.round(moveDist / 12); // Reduced sensitivity for smoother dragging
                 let newTemp = currentTempRef.current + tempChange;
 
                 if (newTemp > maxTemp) newTemp = maxTemp;
