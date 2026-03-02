@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { NeumorphicView } from '../src/components/NeumorphicView';
@@ -26,8 +26,7 @@ export default function HomeScreen() {
     };
 
     return (
-        <View style={[styles.container, { backgroundColor: theme.background }]}>
-            {/* 1. Header & Theme Toggle */}
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
             <View style={styles.header}>
                 <View style={styles.userInfo}>
                     <Text style={[styles.title, { color: theme.textPrimary }]}>HOYR Home</Text>
@@ -46,29 +45,39 @@ export default function HomeScreen() {
                 </TouchableOpacity>
             </View>
 
-            {/* 2. Thermostat Dial (Heating / Cooling UI) */}
-            <View style={styles.centerCard}>
-                <ThermostatDial
-                    size={260}
-                    initialTemp={22}
-                    status="Heating"
-                    onTempChange={() => Haptics.selectionAsync()}
-                />
-            </View>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+            >
+                {/* 2. Thermostat Dial (Heating / Cooling UI) */}
+                <View style={styles.centerCard}>
+                    <ThermostatDial
+                        size={260}
+                        initialTemp={22}
+                        status="Heating"
+                        onTempChange={() => Haptics.selectionAsync()}
+                    />
+                </View>
 
-            {/* 3. Device Quick Actions (Tugmalar ro'yxati) */}
-            <View style={styles.row}>
-                <DeviceButton icon="💡" name="Chiroqlar" />
-                <DeviceButton icon="🔌" name="Rozetkalar" isActive={true} />
-                <DeviceButton icon="🎥" name="Kameralar" />
-            </View>
+                {/* 3. Device Quick Actions (Tugmalar ro'yxati) */}
+                <View style={styles.row}>
+                    <DeviceButton icon="💡" name="Chiroqlar" />
+                    <DeviceButton icon="🔌" name="Rozetkalar" isActive={true} />
+                    <DeviceButton icon="🎥" name="Kameralar" />
+                </View>
+            </ScrollView>
 
             {/* 4. Mic Premium Button (Voice First Falsafasi) */}
             <View style={styles.micContainer}>
-                <TouchableOpacity onPress={handleMicPress} activeOpacity={0.8}>
-                    <NeumorphicView size={90} radius={45} style={{ backgroundColor: theme.primary, shadowColor: theme.primary }}>
-                        <Text style={{ fontSize: 36, color: 'white' }}>🎙️</Text>
-                    </NeumorphicView>
+                <TouchableOpacity
+                    onPress={handleMicPress}
+                    activeOpacity={0.8}
+                    style={[
+                        styles.micButton,
+                        { backgroundColor: theme.primary, shadowColor: theme.primary }
+                    ]}
+                >
+                    <Text style={{ fontSize: 36, color: 'white' }}>🎙️</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -76,16 +85,17 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-        paddingTop: 60,
-    },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 40,
+        paddingHorizontal: 24,
+        paddingTop: 60,
+        paddingBottom: 20,
+    },
+    scrollContent: {
+        paddingHorizontal: 24,
+        paddingBottom: 120, // Bottom padding to prevent overlap with mic button
     },
     userInfo: {
         flexDirection: 'column',
@@ -101,11 +111,12 @@ const styles = StyleSheet.create({
     centerCard: {
         alignItems: 'center',
         marginBottom: 50,
+        marginTop: 10,
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 10,
+        flexWrap: 'wrap',
     },
     micContainer: {
         position: 'absolute',
@@ -113,5 +124,16 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         alignItems: 'center',
+    },
+    micButton: {
+        width: 90,
+        height: 90,
+        borderRadius: 45,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+        elevation: 10,
     }
 });
