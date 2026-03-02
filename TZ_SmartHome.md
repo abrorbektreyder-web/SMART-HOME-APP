@@ -64,12 +64,12 @@ Oddiy loyihadan uni Million dollarlik biznesga aylantirish uchun:
 *   Haptic Feedback (Vibratsiyalar) ulash.
 *   Natija: UI umuman qotmasdan ishlaydigan chiroyli demo versiya holiga keladi (lekin hali uylar yoqilmaydi).
 
-### **3-QADAM: Backend va API Integratsiyasi (2-3 hafta)**
-*   NestJS serverni ko'tarish, ma'lumotlar bazasini o'rnatish.
-*   Foydalanuvchi registratsiyasi va Token tizimini (JWT Authentication) yo'lga qo'yish.
-*   **Tuya Open API** ga ulanish orqali qurilmalarni o'qish (Fetch Devices) funksiyasini integratsiya qilish.
-*   Qurilma buyruqlarini (Command: Turn On, Set Temp 22) jo'natish xizmatlarini yozish.
-*   Natija: Server foydalanuvchining chiroqlarini Tuya'dan bizga tortib bera oladi.
+### **3-QADAM: Backend va API Integratsiyasi (In Progress ⏳)**
+*   [x] NestJS serverni ko'tarish, ma'lumotlar bazasini o'rnatish.
+*   [ ] Foydalanuvchi registratsiyasi va Token tizimini (JWT Authentication) yo'lga qo'yish.
+*   [ ] **Tuya Open API** ga ulanish orqali qurilmalarni o'qish (Fetch Devices) funksiyasini integratsiya qilish.
+*   [ ] Qurilma buyruqlarini (Command: Turn On, Set Temp 22) jo'natish xizmatlarini yozish.
+*   [ ] Natija: Server foydalanuvchining chiroqlarini Tuya'dan bizga tortib bera oladi.
 
 ### **4-QADAM: Real-time Sinxronizatsiya va Biriktirish (1 hafta)**
 *   Ilovani (Frontend) va Serverni (Backend) WebSockets/MQTT orqali bir-biriga bog'lash.
