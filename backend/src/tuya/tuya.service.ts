@@ -27,7 +27,7 @@ export class TuyaService {
             });
         }
 
-        const savedDevices = [];
+        const savedDevices: any[] = [];
         for (const dev of mockTuyaDevices) {
             const device = await this.prisma.device.upsert({
                 where: { tuyaId: dev.id },
