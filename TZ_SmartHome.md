@@ -66,7 +66,7 @@ Oddiy loyihadan uni Million dollarlik biznesga aylantirish uchun:
 
 ### **3-QADAM: Backend va API Integratsiyasi (In Progress ⏳)**
 *   [x] NestJS serverni ko'tarish, ma'lumotlar bazasini o'rnatish.
-*   [ ] Foydalanuvchi registratsiyasi va Token tizimini (JWT Authentication) yo'lga qo'yish.
+*   [x] Foydalanuvchi registratsiyasi va Token tizimini (JWT Authentication) yo'lga qo'yish.
 *   [ ] **Tuya Open API** ga ulanish orqali qurilmalarni o'qish (Fetch Devices) funksiyasini integratsiya qilish.
 *   [ ] Qurilma buyruqlarini (Command: Turn On, Set Temp 22) jo'natish xizmatlarini yozish.
 *   [ ] Natija: Server foydalanuvchining chiroqlarini Tuya'dan bizga tortib bera oladi.
