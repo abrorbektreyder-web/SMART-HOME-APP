@@ -1,53 +1,75 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { NeumorphicView } from '../components/NeumorphicView';
-import { useAppStore } from '../store/useAppStore';
-import { colors } from '../theme/colors';
+import { useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
+import { NeumorphicView } from '../src/components/NeumorphicView';
+import { ThermostatDial } from '../src/components/ThermostatDial';
+import { DeviceButton } from '../src/components/DeviceButton';
+import { useAppStore } from '../src/store/useAppStore';
+import { colors } from '../src/theme/colors';
 
-// Example Home Screen for testing UI
+// Bosh qism (Dashboard datchiklari UI)
 export default function HomeScreen() {
-    const themeMode = useAppStore(state => state.theme);
-    const toggleTheme = useAppStore(state => state.toggleTheme);
-    const theme = colors[themeMode];
+    const router = useRouter();
+    const themeMode = useAppStore((state: any) => state.theme);
+    const toggleTheme = useAppStore((state: any) => state.toggleTheme);
+    const theme = colors[themeMode as 'light' | 'dark'];
+
+    const handleMicPress = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        // Masalan, ovozli asistentni ochish uchun logika
+    };
+
+    const navToRooms = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        router.push('/rooms');
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
+            {/* 1. Header & Theme Toggle */}
             <View style={styles.header}>
-                <Text style={[styles.title, { color: theme.textPrimary }]}>HOYR Home</Text>
-                <TouchableOpacity onPress={toggleTheme}>
+                <View style={styles.userInfo}>
+                    <Text style={[styles.title, { color: theme.textPrimary }]}>HOYR Home</Text>
+                    <TouchableOpacity onPress={navToRooms} style={styles.navLink}>
+                        <Text style={{ color: theme.primary, fontWeight: 'bold' }}>Xonalarga o'tish →</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <TouchableOpacity onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    toggleTheme();
+                }}>
                     <NeumorphicView size={48} radius={24}>
                         <Text style={{ fontSize: 20 }}>{themeMode === 'light' ? '🌙' : '☀️'}</Text>
                     </NeumorphicView>
                 </TouchableOpacity>
             </View>
 
+            {/* 2. Thermostat Dial (Heating / Cooling UI) */}
             <View style={styles.centerCard}>
-                <NeumorphicView style={styles.dashboardCard} radius={32}>
-                    <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Living Room</Text>
-                    <Text style={[styles.info, { color: theme.textPrimary }]}>14°</Text>
-                    <Text style={{ color: theme.primary, marginTop: 10, fontWeight: 'bold' }}>Status: Active</Text>
-                </NeumorphicView>
+                <ThermostatDial
+                    size={260}
+                    initialTemp={22}
+                    status="Heating"
+                    onTempChange={() => Haptics.selectionAsync()}
+                />
             </View>
 
+            {/* 3. Device Quick Actions (Tugmalar ro'yxati) */}
             <View style={styles.row}>
-                <NeumorphicView size={80} radius={40} type="pressed">
-                    <Text style={{ fontSize: 32 }}>💡</Text>
-                </NeumorphicView>
-
-                <NeumorphicView size={80} radius={40}>
-                    <Text style={{ fontSize: 32 }}>🔌</Text>
-                </NeumorphicView>
-
-                <NeumorphicView size={80} radius={40}>
-                    <Text style={{ fontSize: 32 }}>🌡️</Text>
-                </NeumorphicView>
+                <DeviceButton icon="💡" name="Chiroqlar" />
+                <DeviceButton icon="🔌" name="Rozetkalar" isActive={true} />
+                <DeviceButton icon="🎥" name="Kameralar" />
             </View>
 
-            {/* Mic Premium Button (Voice First) */}
+            {/* 4. Mic Premium Button (Voice First Falsafasi) */}
             <View style={styles.micContainer}>
-                <NeumorphicView size={90} radius={45} style={{ backgroundColor: theme.primary }}>
-                    <Text style={{ fontSize: 36, color: 'white' }}>🎙️</Text>
-                </NeumorphicView>
+                <TouchableOpacity onPress={handleMicPress} activeOpacity={0.8}>
+                    <NeumorphicView size={90} radius={45} style={{ backgroundColor: theme.primary, shadowColor: theme.primary }}>
+                        <Text style={{ fontSize: 36, color: 'white' }}>🎙️</Text>
+                    </NeumorphicView>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -65,32 +87,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 40,
     },
+    userInfo: {
+        flexDirection: 'column',
+    },
     title: {
         fontSize: 28,
         fontWeight: '700',
     },
+    navLink: {
+        marginTop: 5,
+        paddingVertical: 5,
+    },
     centerCard: {
         alignItems: 'center',
-        marginBottom: 40,
-    },
-    dashboardCard: {
-        padding: 30,
-        width: '100%',
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-    },
-    subtitle: {
-        fontSize: 18,
-        marginBottom: 8,
-    },
-    info: {
-        fontSize: 56,
-        fontWeight: '300',
+        marginBottom: 50,
     },
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 20,
+        marginTop: 10,
     },
     micContainer: {
         position: 'absolute',

@@ -57,12 +57,12 @@ Oddiy loyihadan uni Million dollarlik biznesga aylantirish uchun:
 *   [x] Loyihadagi rang kodlari, shriftlari va ikonkalar jamlanmasini yaratish.
 *   [x] React Native loyihasini yaratish va papka strukturasini sozlash.
 
-### **2-QADAM: UI/UX Komponentlarni Dasturlash (Frontend MVP - In Progress ⏳)**
+### **2-QADAM: UI/UX Komponentlarni Dasturlash (Frontend MVP - Yakunlandi ✔)**
 *   [x] Eng qiyin qismlarni yozish: Silliq soyalar (Neumorphism Drop-shadows) uchun komponent yaratish.
 *   [x] Konditsioner Termostatini (aylanuvchi halqa) matematika va SVG tushunchalari bilan yasash va unga animatsiya (Gesto-pan) qoshish.
-*   [ ] Navigation (Bosh sahifa, Xonalar va Datchiklar sahifasi oynalarini ulash).
-*   [ ] Haptic Feedback (Vibratsiyalar) ulash.
-*   [ ] Natija: UI umuman qotmasdan ishlaydigan chiroyli demo versiya holiga keladi.
+*   [x] Navigation (Bosh sahifa, Xonalar va Datchiklar sahifasi oynalarini ulash).
+*   [x] Haptic Feedback (Vibratsiyalar) ulash.
+*   [x] Natija: UI umuman qotmasdan ishlaydigan chiroyli demo versiya holiga keladi.
 
 ### **3-QADAM: Backend va API Integratsiyasi (2-3 hafta)**
 *   NestJS serverni ko'tarish, ma'lumotlar bazasini o'rnatish.
