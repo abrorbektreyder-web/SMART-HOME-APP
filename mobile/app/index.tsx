@@ -43,12 +43,27 @@ export default function HomeScreen() {
     const devices = useAppStore((state: any) => state.devices);
     const sendDeviceCommand = useAppStore((state: any) => state.sendDeviceCommand);
 
+    const [familyMembers, setFamilyMembers] = React.useState([
+        { avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026024d', online: true },
+        { avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d', online: true },
+        { avatar: 'https://i.pravatar.cc/150?u=a04258114e29026302d', online: false },
+    ]);
+
     React.useEffect(() => {
         initSocket();
     }, []);
 
     const theme = colors[themeMode as 'light' | 'dark'];
     const t = translations[language as 'uz' | 'ru'];
+
+    const handleAddFamilyMember = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        const randomId = Math.random().toString(36).substring(7);
+        setFamilyMembers([
+            ...familyMembers,
+            { avatar: `https://i.pravatar.cc/150?u=${randomId}`, online: Math.random() > 0.5 }
+        ]);
+    };
 
     const handleMicPress = () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -111,23 +126,17 @@ export default function HomeScreen() {
                 <View style={styles.sectionHeader}>
                     <Text style={[styles.sectionTitle, { color: theme.textSecondary }]}>{t.family}</Text>
                 </View>
-                <View style={styles.familyRow}>
-                    <View style={styles.avatarContainer}>
-                        <Image source={{ uri: 'https://i.pravatar.cc/150?u=a042581f4e29026024d' }} style={styles.avatar} />
-                        <View style={[styles.onlineDot, { backgroundColor: theme.ecoGreen }]} />
-                    </View>
-                    <View style={styles.avatarContainer}>
-                        <Image source={{ uri: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' }} style={styles.avatar} />
-                        <View style={[styles.onlineDot, { backgroundColor: theme.ecoGreen }]} />
-                    </View>
-                    <View style={styles.avatarContainer}>
-                        <Image source={{ uri: 'https://i.pravatar.cc/150?u=a04258114e29026302d' }} style={styles.avatar} />
-                        <View style={[styles.onlineDot, { backgroundColor: theme.textSecondary }]} />
-                    </View>
-                    <TouchableOpacity style={[styles.avatarAdd, { borderColor: theme.textSecondary }]}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.familyRow}>
+                    {familyMembers.map((member, index) => (
+                        <View key={index} style={styles.avatarContainer}>
+                            <Image source={{ uri: member.avatar }} style={styles.avatar} />
+                            <View style={[styles.onlineDot, { backgroundColor: member.online ? theme.ecoGreen : theme.textSecondary }]} />
+                        </View>
+                    ))}
+                    <TouchableOpacity onPress={handleAddFamilyMember} activeOpacity={0.7} style={[styles.avatarAdd, { borderColor: theme.textSecondary }]}>
                         <Ionicons name="add" size={24} color={theme.textSecondary} />
                     </TouchableOpacity>
-                </View>
+                </ScrollView>
 
                 {/* Asosiy Konditsioner Dial */}
                 <View style={styles.centerCard}>
@@ -234,7 +243,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 24,
-        paddingTop: 65,
+        paddingTop: 30, // Kamaytirilgan bo'shliq
         paddingBottom: 25,
     },
     menuButton: {
