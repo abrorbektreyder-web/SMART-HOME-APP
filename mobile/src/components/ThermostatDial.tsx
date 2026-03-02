@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, PanResponder, Animated } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
+import { View, StyleSheet, Text, PanResponder } from 'react-native';
+import Svg, { Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { useAppStore } from '../store/useAppStore';
 import { colors } from '../theme/colors';
@@ -14,7 +14,7 @@ interface ThermostatDialProps {
 }
 
 export const ThermostatDial: React.FC<ThermostatDialProps> = ({
-    size = 280,
+    size = 260,
     initialTemp = 22,
     minTemp = 16,
     maxTemp = 32,
@@ -24,15 +24,13 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
     const themeMode = useAppStore((state: any) => state.theme);
     const theme = colors[themeMode as 'light' | 'dark'];
 
-    const strokeWidth = 14;
-    const radius = (size - strokeWidth) / 2;
+    const strokeWidth = 12;
+    const radius = (size - strokeWidth) / 2 - 20; // 20px padding inside neumorphism
     const center = size / 2;
     const circumference = 2 * Math.PI * radius;
 
-    // PanResponder - Termostatni chindan ham aylantirish (draging) uchun
     const currentTempRef = useRef(initialTemp);
 
-    // Pan Responder: Tepaga/Pastga surish orqali temp ni o'zgartiramiz
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -41,9 +39,7 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
             onPanResponderMove: (evt, gestureState) => {
-                // dy => vertikal harakat
                 const dy = gestureState.dy;
-                // Har 8 piksel surish 1 gradusni anglatadi (xohishga qarab)
                 const tempChange = Math.round(-dy / 8);
                 let newTemp = currentTempRef.current + tempChange;
 
@@ -57,66 +53,63 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
             onPanResponderRelease: () => {
                 currentTempRef.current = temp;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                // Shu joyda keyinchalik Backend API ga "Update Temp" yuboriladi
             }
         })
     ).current;
 
-    // Yengil haptic har gradus o'zgarganda (juda yoqimli effekt beradi)
     useEffect(() => {
         if (temp !== initialTemp) {
             Haptics.selectionAsync();
         }
     }, [temp]);
 
+    // Open Arc (75% circle length)
+    const arcLength = 0.75;
     const progress = (temp - minTemp) / (maxTemp - minTemp);
-    const dashoffset = circumference - progress * circumference * 0.75;
-
-    const getStatusColor = () => {
-        switch (status) {
-            case 'Heating': return theme.accentWarm;
-            case 'Cooling': return theme.accentCool;
-            case 'Eco': return theme.ecoGreen;
-            default: return theme.textSecondary;
-        }
-    };
+    const dashoffset = circumference - progress * (circumference * arcLength);
 
     return (
         <View style={[styles.container, { width: size, height: size }]} {...panResponder.panHandlers}>
-            {/* Neumorphic Shadow Orqa Fon */}
+            {/* Neumorphic Shadow Outer Background - Matches Aura strictly */}
             <View style={[
                 styles.outerRing,
                 {
                     width: size, height: size, borderRadius: size / 2,
-                    backgroundColor: theme.background,
+                    backgroundColor: theme.surface,
                     shadowColor: theme.shadowLight,
-                    shadowOffset: { width: -10, height: -10 },
-                    shadowOpacity: 1, shadowRadius: 15, elevation: 5,
+                    shadowOffset: { width: -20, height: -20 },
+                    shadowOpacity: 1, shadowRadius: 40, elevation: 5,
                 }
             ]}>
                 <View style={[
                     StyleSheet.absoluteFillObject,
                     {
-                        borderRadius: size / 2, backgroundColor: theme.background,
-                        shadowColor: theme.shadowDark, shadowOffset: { width: 10, height: 10 },
-                        shadowOpacity: 0.5, shadowRadius: 15, elevation: 10,
+                        borderRadius: size / 2, backgroundColor: theme.surface,
+                        shadowColor: theme.shadowDark, shadowOffset: { width: 20, height: 20 },
+                        shadowOpacity: 0.8, shadowRadius: 40, elevation: 10,
                     }
                 ]} />
             </View>
 
-            {/* SVG Doira (Circle) */}
+            {/* SVG Arc Progress */}
             <View style={StyleSheet.absoluteFill}>
                 <Svg width={size} height={size}>
-                    {/* Background Track */}
+                    <Defs>
+                        <SvgLinearGradient id="heatingGrad" x1="0" y1="0" x2="1" y2="1">
+                            <Stop offset="0" stopColor={theme.accentWarm} />
+                            <Stop offset="1" stopColor={theme.primary} />
+                        </SvgLinearGradient>
+                    </Defs>
+                    {/* Background Track Arc */}
                     <Circle
                         cx={center} cy={center} r={radius} stroke={theme.border}
                         strokeWidth={strokeWidth} fill="none" strokeLinecap="round"
-                        strokeDasharray={circumference} strokeDashoffset={circumference * 0.25}
+                        strokeDasharray={circumference} strokeDashoffset={circumference * (1 - arcLength)}
                         origin={`${center}, ${center}`} rotation="135"
                     />
-                    {/* Active Track */}
+                    {/* Active Gradient Track */}
                     <Circle
-                        cx={center} cy={center} r={radius} stroke={getStatusColor()}
+                        cx={center} cy={center} r={radius} stroke="url(#heatingGrad)"
                         strokeWidth={strokeWidth} fill="none" strokeLinecap="round"
                         strokeDasharray={circumference} strokeDashoffset={dashoffset}
                         origin={`${center}, ${center}`} rotation="135"
@@ -124,10 +117,10 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
                 </Svg>
             </View>
 
-            {/* O'rta Text (Gradus va status) */}
+            {/* Inside Values */}
             <View style={styles.centerTextContainer}>
-                <Text style={[styles.statusText, { color: getStatusColor() }]}>
-                    {status.toUpperCase()}
+                <Text style={[styles.statusText, { color: theme.primary }]}>
+                    HEATING
                 </Text>
                 <Text style={[styles.tempText, { color: theme.textPrimary }]}>
                     {temp}°
@@ -143,8 +136,8 @@ export const ThermostatDial: React.FC<ThermostatDialProps> = ({
 const styles = StyleSheet.create({
     container: { alignItems: 'center', justifyContent: 'center' },
     outerRing: { position: 'absolute' },
-    centerTextContainer: { alignItems: 'center', justifyContent: 'center' },
-    statusText: { fontSize: 13, fontWeight: '600', letterSpacing: 2, marginBottom: 5 },
-    tempText: { fontSize: 68, fontWeight: '300' },
-    unitText: { fontSize: 14, marginTop: 5 },
+    centerTextContainer: { alignItems: 'center', justifyContent: 'center', marginTop: 10 },
+    statusText: { fontSize: 13, fontWeight: '700', letterSpacing: 2, marginBottom: 5 },
+    tempText: { fontSize: 72, fontWeight: '400' },
+    unitText: { fontSize: 14, fontWeight: '500', marginTop: 5 },
 });

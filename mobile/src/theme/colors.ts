@@ -1,34 +1,30 @@
-/**
- * Smart Home Premium UI Colors (Neumorphism & High Contrast)
- * Based on https://smart-home-mobile.aura.build/
- */
 export const colors = {
     light: {
-        background: '#F3F4F6', // Ochiq kulrang, soft UI foni
-        surface: '#FFFFFF', // Neumorphism kartalar uchun oq
-        primary: '#F43F5E', // Asosiy qizil/pushti aktiv elementlar uchun (Microfon, Aktiv chiroqlar)
+        background: '#f1f5f9', // Aura main bg
+        surface: '#ffffff', // Aura cards bg
+        primary: '#f43f5e', // Aura red accent
         primaryGlow: 'rgba(244, 63, 94, 0.4)',
-        textPrimary: '#111827', // To'q kulrang
-        textSecondary: '#6B7280', // Ochiqroq matn
-        accentWarm: '#F59E0B', // Issiq qismlar (termostat isitish) uchun olovrang
-        accentCool: '#3B82F6', // Sovutish konditsioner uchun ko'k
-        ecoGreen: '#10B981', // Eco rejim uchun yashil
-        shadowLight: '#FFFFFF', // Neumorphism uchun yorug'lik soyasi
-        shadowDark: '#D1D5DB', // Neumorphism uchun qora soyasi
-        border: '#E5E7EB',
+        textPrimary: '#0f172a', // Aura text 900
+        textSecondary: '#64748b', // Aura text 500
+        accentWarm: '#f97316', // Aura orange
+        accentCool: '#3B82F6',
+        ecoGreen: '#10B981',
+        shadowLight: '#ffffff',
+        shadowDark: '#cbd5e1', // Aura shadow
+        border: '#e2e8f0',
     },
-    dark: {
-        background: '#111827', // Tungi preimum fon
-        surface: '#1F2937',
-        primary: '#F43F5E',
-        primaryGlow: 'rgba(244, 63, 94, 0.6)',
-        textPrimary: '#F9FAFB',
-        textSecondary: '#9CA3AF',
-        accentWarm: '#FBBF24',
-        accentCool: '#60A5FA',
-        ecoGreen: '#34D399',
-        shadowLight: '#374151', // Qorong'i Neumorphism yorug'lik
-        shadowDark: '#0B0F19', // Qorong'i Neumorphism qora qismi
-        border: '#374151',
+    dark: { // Mapped to exactly match light so UI 1:1 holds regardless of device mode
+        background: '#f1f5f9',
+        surface: '#ffffff',
+        primary: '#f43f5e',
+        primaryGlow: 'rgba(244, 63, 94, 0.4)',
+        textPrimary: '#0f172a',
+        textSecondary: '#64748b',
+        accentWarm: '#f97316',
+        accentCool: '#3B82F6',
+        ecoGreen: '#10B981',
+        shadowLight: '#ffffff',
+        shadowDark: '#cbd5e1',
+        border: '#e2e8f0',
     }
 };

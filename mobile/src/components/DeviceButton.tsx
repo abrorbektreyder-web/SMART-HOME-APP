@@ -4,9 +4,10 @@ import * as Haptics from 'expo-haptics';
 import { NeumorphicView } from './NeumorphicView';
 import { useAppStore } from '../store/useAppStore';
 import { colors } from '../theme/colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface DeviceButtonProps {
-    icon: string;
+    icon: any;
     name?: string;
     isActive?: boolean;
     onPress?: (state: boolean) => void;
@@ -18,7 +19,6 @@ export const DeviceButton: React.FC<DeviceButtonProps> = ({ icon, name, isActive
     const theme = colors[themeMode as 'light' | 'dark'];
 
     const handlePress = () => {
-        // 📳 Haptic Feedback (Vibratsiya) - Premium hissiyot uchin!
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
         const newState = !active;
@@ -27,17 +27,20 @@ export const DeviceButton: React.FC<DeviceButtonProps> = ({ icon, name, isActive
     };
 
     return (
-        <TouchableOpacity onPress={handlePress} activeOpacity={1}>
+        <TouchableOpacity onPress={handlePress} activeOpacity={1} style={styles.container}>
             <NeumorphicView
-                size={80}
-                radius={40}
+                size={56} // Aura UI is around 48px or 56px
+                radius={28}
                 type={active ? 'pressed' : 'flat'}
-                style={active ? { backgroundColor: theme.primaryGlow } : {}}
             >
-                <Text style={{ fontSize: 32 }}>{icon}</Text>
+                <Ionicons
+                    name={icon as any}
+                    size={24}
+                    color={active ? '#ffffff' : theme.textSecondary}
+                />
             </NeumorphicView>
             {name && (
-                <Text style={[styles.name, { color: active ? theme.primary : theme.textSecondary }]}>
+                <Text style={[styles.name, { color: active ? theme.textPrimary : theme.textSecondary }]}>
                     {name}
                 </Text>
             )}
@@ -46,10 +49,14 @@ export const DeviceButton: React.FC<DeviceButtonProps> = ({ icon, name, isActive
 };
 
 const styles = StyleSheet.create({
+    container: {
+        alignItems: 'center',
+        marginHorizontal: 8,
+    },
     name: {
-        marginTop: 10,
+        marginTop: 12,
         textAlign: 'center',
-        fontWeight: '600',
-        fontSize: 14,
+        fontWeight: '500',
+        fontSize: 12,
     }
 });

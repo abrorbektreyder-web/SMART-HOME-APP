@@ -9,6 +9,7 @@ interface NeumorphicViewProps extends ViewProps {
     size?: number | string;
     radius?: number;
     type?: 'flat' | 'pressed';
+    bg?: string; // override background
 }
 
 export const NeumorphicView: React.FC<NeumorphicViewProps> = ({
@@ -17,13 +18,17 @@ export const NeumorphicView: React.FC<NeumorphicViewProps> = ({
     size,
     radius = 24,
     type = 'flat',
+    bg,
     ...props
 }) => {
     const themeMode = useAppStore((state: any) => state.theme);
     const theme = colors[themeMode as 'light' | 'dark'];
 
+    // Aura specifically uses white surface for all floating objects
+    const bgColor = bg || theme.surface;
+
     const baseStyle = {
-        backgroundColor: theme.background,
+        backgroundColor: bgColor,
         borderRadius: radius,
         width: size,
         height: size,
@@ -31,24 +36,30 @@ export const NeumorphicView: React.FC<NeumorphicViewProps> = ({
 
     const shadowLight = {
         shadowColor: theme.shadowLight,
-        shadowOffset: { width: -6, height: -6 },
+        shadowOffset: { width: -10, height: -10 },
         shadowOpacity: 1,
-        shadowRadius: 10,
+        shadowRadius: 20,
         elevation: 5,
     };
 
     const shadowDark = {
         shadowColor: theme.shadowDark,
-        shadowOffset: { width: 6, height: 6 },
-        shadowOpacity: 0.5,
-        shadowRadius: 10,
-        elevation: 8,
+        shadowOffset: { width: 15, height: 15 },
+        shadowOpacity: 0.8,
+        shadowRadius: 30,
+        elevation: 10,
     };
 
     if (type === 'pressed') {
-        // Inner shadow like effect is complex in standard RN, falling back to flat with darker background for pressed
         return (
-            <View style={[styles.container, baseStyle, { backgroundColor: themeMode === 'light' ? '#E5E7EB' : '#1F2937' }, style]} {...props}>
+            <View style={[styles.container, baseStyle, {
+                backgroundColor: theme.primary,
+                shadowColor: theme.primary,
+                shadowOffset: { width: 0, height: 10 },
+                shadowOpacity: 0.3,
+                shadowRadius: 15,
+                elevation: 10
+            }, style]} {...props}>
                 {children}
             </View>
         );
