@@ -52,17 +52,17 @@ Oddiy loyihadan uni Million dollarlik biznesga aylantirish uchun:
 
 ## 5. BOSQICHMA-BOSQICH AMALGA OSHIRISH REJASI (ROADMAP)
 
-### **1-QADAM: Arxitektura va Dizaynni Qabul Qilish (1 hafta)**
-*   Aura-build da berilgan UI/UX shablonni to'liq Figma ga o'tkazish yoki tahlil qilib Exact-Match (1ga1) komponentlar ro'yxatini tuzish.
-*   Loyihadagi rang kodlari, shriftlari va ikonkalar jamlanmasini yaratish.
-*   React Native loyihasini yaratish va papka strukturasini sozlash.
+### **1-QADAM: Arxitektura va Dizaynni Qabul Qilish (Bajarildi ✔)**
+*   [x] Aura-build da berilgan UI/UX shablonni to'liq Figma ga o'tkazish yoki tahlil qilib Exact-Match (1ga1) komponentlar ro'yxatini tuzish. O'rnatilgan brend "HOYR".
+*   [x] Loyihadagi rang kodlari, shriftlari va ikonkalar jamlanmasini yaratish.
+*   [x] React Native loyihasini yaratish va papka strukturasini sozlash.
 
-### **2-QADAM: UI/UX Komponentlarni Dasturlash (Frontend MVP - 2 hafta)**
-*   Eng qiyin qismlarni yozish: Silliq soyalar (Neumorphism Drop-shadows) uchun komponent yaratish.
-*   Konditsioner Termostatini (aylanuvchi halqa) matematika va SVG tushunchalari bilan yasash va unga animatsiya (Gesto-pan) qoshish.
-*   Navigation (Xonalar va Datchiklar sahifasi oynalarini ulash).
-*   Haptic Feedback (Vibratsiyalar) ulash.
-*   Natija: UI umuman qotmasdan ishlaydigan chiroyli demo versiya holiga keladi (lekin hali uylar yoqilmaydi).
+### **2-QADAM: UI/UX Komponentlarni Dasturlash (Frontend MVP - In Progress ⏳)**
+*   [x] Eng qiyin qismlarni yozish: Silliq soyalar (Neumorphism Drop-shadows) uchun komponent yaratish.
+*   [x] Konditsioner Termostatini (aylanuvchi halqa) matematika va SVG tushunchalari bilan yasash va unga animatsiya (Gesto-pan) qoshish.
+*   [ ] Navigation (Bosh sahifa, Xonalar va Datchiklar sahifasi oynalarini ulash).
+*   [ ] Haptic Feedback (Vibratsiyalar) ulash.
+*   [ ] Natija: UI umuman qotmasdan ishlaydigan chiroyli demo versiya holiga keladi.
 
 ### **3-QADAM: Backend va API Integratsiyasi (2-3 hafta)**
 *   NestJS serverni ko'tarish, ma'lumotlar bazasini o'rnatish.
