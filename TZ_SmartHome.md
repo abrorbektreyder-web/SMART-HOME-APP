@@ -64,17 +64,17 @@ Oddiy loyihadan uni Million dollarlik biznesga aylantirish uchun:
 *   [x] Haptic Feedback (Vibratsiyalar) ulash.
 *   [x] Natija: UI umuman qotmasdan ishlaydigan chiroyli demo versiya holiga keladi.
 
-### **3-QADAM: Backend va API Integratsiyasi (2-3 hafta)**
-*   NestJS serverni ko'tarish, ma'lumotlar bazasini o'rnatish.
-*   Foydalanuvchi registratsiyasi va Token tizimini (JWT Authentication) yo'lga qo'yish.
-*   **Tuya Open API** ga ulanish orqali qurilmalarni o'qish (Fetch Devices) funksiyasini integratsiya qilish.
-*   Qurilma buyruqlarini (Command: Turn On, Set Temp 22) jo'natish xizmatlarini yozish.
-*   Natija: Server foydalanuvchining chiroqlarini Tuya'dan bizga tortib bera oladi.
+### **3-QADAM: Backend va API Integratsiyasi (In Progress ⏳)**
+*   [x] NestJS serverni ko'tarish, ma'lumotlar bazasini o'rnatish.
+*   [x] Foydalanuvchi registratsiyasi va Token tizimini (JWT Authentication) yo'lga qo'yish.
+*   [x] **Tuya Open API** ga ulanish orqali qurilmalarni o'qish (Fetch Devices) funksiyasini integratsiya qilish.
+*   [x] Qurilma buyruqlarini (Command: Turn On, Set Temp 22) jo'natish xizmatlarini yozish.
+*   [x] Natija: Server foydalanuvchining chiroqlarini Tuya'dan bizga tortib bera oladi.
 
-### **4-QADAM: Real-time Sinxronizatsiya va Biriktirish (1 hafta)**
-*   Ilovani (Frontend) va Serverni (Backend) WebSockets/MQTT orqali bir-biriga bog'lash.
-*   Ilovadagi tugma bosilganda API orqali chindan ham real qurilma reaksiyasi qanday bo'layotganini jonli test qilish.
-*   Xato berish (Internet yo'q bo'lsa) va qurilma "Offline" holatida qanday ko'rinishini dasturlash.
+### **4-QADAM: Real-time Sinxronizatsiya va Biriktirish (In Progress ⏳)**
+*   [x] Ilovani (Frontend) va Serverni (Backend) WebSockets/MQTT orqali bir-biriga bog'lash.
+*   [ ] Ilovadagi tugma bosilganda API orqali chindan ham real qurilma reaksiyasi qanday bo'layotganini jonli test qilish.
+*   [ ] Xato berish (Internet yo'q bo'lsa) va qurilma "Offline" holatida qanday ko'rinishini dasturlash.
 
 ### **5-QADAM: Sinovlar, Stabilizatsiyala va Reliz (1-2 hafta)**
 *   Dasturni Android APK va iOS TestFlight (Test qilish) ga chiqarib haqiqiy qurilmalar bilan xonadonda test qilib ko'rish.

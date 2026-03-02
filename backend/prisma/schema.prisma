@@ -1,0 +1,54 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  phone     String   @unique
+  name      String
+  role      Role     @default(USER)
+  rooms     Room[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Room {
+  id        String   @id @default(uuid())
+  name      String
+  imageUrl  String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  devices   Device[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Device {
+  id           String     @id @default(uuid())
+  name         String
+  type         DeviceType
+  isOn         Boolean    @default(false)
+  settings     Json?      // Additional settings (e.g. { temp: 22, color: '#f00' })
+  tuyaId       String?    @unique // Integration with original Tuya cloud ID
+  roomId       String
+  room         Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+  FAMILY_MEMBER
+}
+
+enum DeviceType {
+  LIGHT
+  PLUG
+  CLIMATE
+  CAMERA
+}
