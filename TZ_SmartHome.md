@@ -71,10 +71,10 @@ Oddiy loyihadan uni Million dollarlik biznesga aylantirish uchun:
 *   [x] Qurilma buyruqlarini (Command: Turn On, Set Temp 22) jo'natish xizmatlarini yozish.
 *   [x] Natija: Server foydalanuvchining chiroqlarini Tuya'dan bizga tortib bera oladi.
 
-### **4-QADAM: Real-time Sinxronizatsiya va Biriktirish (In Progress ⏳)**
+### **4-QADAM: Real-time Sinxronizatsiya va Biriktirish (Bajarildi ✔)**
 *   [x] Ilovani (Frontend) va Serverni (Backend) WebSockets/MQTT orqali bir-biriga bog'lash.
-*   [ ] Ilovadagi tugma bosilganda API orqali chindan ham real qurilma reaksiyasi qanday bo'layotganini jonli test qilish.
-*   [ ] Xato berish (Internet yo'q bo'lsa) va qurilma "Offline" holatida qanday ko'rinishini dasturlash.
+*   [x] Ilovadagi tugma bosilganda API orqali chindan ham real qurilma reaksiyasi qanday bo'layotganini jonli test qilish (va Web Speech API ovozli boshqaruvini qoshish).
+*   [x] Xato berish (Internet yo'q bo'lsa) va qurilma "Offline" holatida qanday ko'rinishini dasturlash.
 
 ### **5-QADAM: Sinovlar, Stabilizatsiyala va Reliz (1-2 hafta)**
 *   Dasturni Android APK va iOS TestFlight (Test qilish) ga chiqarib haqiqiy qurilmalar bilan xonadonda test qilib ko'rish.
