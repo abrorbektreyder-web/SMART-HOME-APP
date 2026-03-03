@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useAppStore } from '../src/store/useAppStore';
 import { colors } from '../src/theme/colors';
-import { NeumorphicView } from '../src/components/NeumorphicView';
 import { Ionicons } from '@expo/vector-icons';
 
 const translations = {
@@ -13,10 +12,10 @@ const translations = {
         myRooms: 'Mening Xonalarim',
         sensors: 'ta datchik',
         roomsInfo: [
-            { id: 1, name: 'Asosiy Mehmonxona', emoji: '🛋️', count: 3 },
-            { id: 2, name: 'Oshxona', emoji: '🍳', count: 2 },
-            { id: 3, name: 'Yotoqxona', emoji: '🛏️', count: 4 },
-            { id: 4, name: 'Bolalar xonasi', emoji: '🧸', count: 1 },
+            { id: 1, name: 'Asosiy Mehmonxona', emoji: '🛋️', count: 3, icon: 'tv-outline' as const },
+            { id: 2, name: 'Oshxona', emoji: '🍳', count: 2, icon: 'restaurant-outline' as const },
+            { id: 3, name: 'Yotoqxona', emoji: '🛏️', count: 4, icon: 'bed-outline' as const },
+            { id: 4, name: 'Bolalar xonasi', emoji: '🧸', count: 1, icon: 'game-controller-outline' as const },
         ]
     },
     ru: {
@@ -24,10 +23,10 @@ const translations = {
         myRooms: 'Мои комнаты',
         sensors: 'датчиков',
         roomsInfo: [
-            { id: 1, name: 'Главная Гостиная', emoji: '🛋️', count: 3 },
-            { id: 2, name: 'Кухня', emoji: '🍳', count: 2 },
-            { id: 3, name: 'Спальня', emoji: '🛏️', count: 4 },
-            { id: 4, name: 'Детская', emoji: '🧸', count: 1 },
+            { id: 1, name: 'Главная Гостиная', emoji: '🛋️', count: 3, icon: 'tv-outline' as const },
+            { id: 2, name: 'Кухня', emoji: '🍳', count: 2, icon: 'restaurant-outline' as const },
+            { id: 3, name: 'Спальня', emoji: '🛏️', count: 4, icon: 'bed-outline' as const },
+            { id: 4, name: 'Детская', emoji: '🧸', count: 1, icon: 'game-controller-outline' as const },
         ]
     }
 };
@@ -58,24 +57,24 @@ export default function RoomsScreen() {
                 {t.roomsInfo.map((room) => (
                     <TouchableOpacity
                         key={room.id}
-                        style={styles.roomWrapper}
+                        style={[styles.roomCard, { backgroundColor: theme.surface }]}
                         onPress={() => Haptics.selectionAsync()}
                         activeOpacity={0.8}
                     >
-                        <NeumorphicView size={'100%'} style={{ minHeight: 140 }} radius={24}>
-                            <View style={styles.cardContent}>
-                                <Text style={styles.emoji}>{room.emoji}</Text>
-                                <Text style={[styles.roomName, { color: theme.textPrimary }]}>
-                                    {room.name}
+                        <View style={[styles.iconCircle, { backgroundColor: theme.primary + '15' }]}>
+                            <Text style={styles.emoji}>{room.emoji}</Text>
+                        </View>
+                        <View style={styles.roomInfo}>
+                            <Text style={[styles.roomName, { color: theme.textPrimary }]}>
+                                {room.name}
+                            </Text>
+                            <View style={styles.countWrapper}>
+                                <Text style={[styles.deviceCount, { color: theme.primary }]}>
+                                    {room.count} {t.sensors}
                                 </Text>
-                                <View style={styles.countWrapper}>
-                                    <Text style={[styles.deviceCount, { color: theme.primary }]}>
-                                        {room.count} {t.sensors}
-                                    </Text>
-                                    <Ionicons name="arrow-forward" size={16} color={theme.primary} />
-                                </View>
+                                <Ionicons name="arrow-forward" size={16} color={theme.primary} />
                             </View>
-                        </NeumorphicView>
+                        </View>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
@@ -86,7 +85,7 @@ export default function RoomsScreen() {
 const styles = StyleSheet.create({
     header: {
         paddingHorizontal: 24,
-        paddingTop: 65,
+        paddingTop: 50,
         paddingBottom: 20,
     },
     backBtn: {
@@ -103,26 +102,36 @@ const styles = StyleSheet.create({
     grid: {
         paddingHorizontal: 24,
         paddingBottom: 40,
-        gap: 20,
+        gap: 16,
     },
-    roomWrapper: {
-        width: '100%',
-        minHeight: 140,
-        marginTop: 10,
+    roomCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 20,
+        borderRadius: 22,
+        shadowColor: 'rgba(0,0,0,0.1)',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 1,
+        shadowRadius: 20,
+        elevation: 5,
     },
-    cardContent: {
-        padding: 24,
-        width: '100%',
-        height: '100%',
+    iconCircle: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
         justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
     },
     emoji: {
-        fontSize: 36,
-        marginBottom: 10,
+        fontSize: 28,
+    },
+    roomInfo: {
+        flex: 1,
     },
     roomName: {
-        fontSize: 22,
-        fontWeight: '600',
+        fontSize: 18,
+        fontWeight: '700',
         marginBottom: 5,
     },
     countWrapper: {
@@ -135,3 +144,4 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     }
 });
+

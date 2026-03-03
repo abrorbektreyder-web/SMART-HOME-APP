@@ -8,6 +8,7 @@ import { useAppStore } from '../src/store/useAppStore';
 import { colors } from '../src/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
 
 const translations = {
     uz: {
@@ -82,66 +83,88 @@ export default function HomeScreen() {
         }
     };
 
-    const handleMicPress = () => {
+    // Ovozli buyruqlarni tahlil qilish (umumiy funksiya — web va native uchun)
+    const processVoiceCommand = (transcript: string) => {
+        const text = transcript.toLowerCase();
+        console.log('Eshitdim:', text);
+
+        if (text.includes('chiroq') || text.includes('свет') || text.includes('oshxona')) {
+            if (text.includes('yoq') || text.includes('включ')) {
+                sendDeviceCommand('tuya_light_1', { turnOn: true });
+            } else if (text.includes("o'chir") || text.includes('o’chir') || text.includes('ochir') || text.includes('выключ')) {
+                sendDeviceCommand('tuya_light_1', { turnOn: false });
+            } else {
+                const light = devices['tuya_light_1'];
+                if (light) sendDeviceCommand('tuya_light_1', { turnOn: !light.isOn });
+            }
+        } else if (text.includes('muzlatkich') || text.includes('muzlatgich') || text.includes('холодильник')) {
+            if (text.includes('yoq') || text.includes('включ')) {
+                sendDeviceCommand('tuya_plug_1', { turnOn: true });
+            } else if (text.includes("o'chir") || text.includes('o’chir') || text.includes('ochir') || text.includes('выключ')) {
+                sendDeviceCommand('tuya_plug_1', { turnOn: false });
+            } else {
+                const plug = devices['tuya_plug_1'];
+                if (plug) sendDeviceCommand('tuya_plug_1', { turnOn: !plug.isOn });
+            }
+        }
+    };
+
+    // Native Speech Recognition event hooks (expo-speech-recognition)
+    useSpeechRecognitionEvent('start', () => setIsListening(true));
+    useSpeechRecognitionEvent('end', () => setIsListening(false));
+    useSpeechRecognitionEvent('result', (event: any) => {
+        if (event.results && event.results[0]?.transcript) {
+            processVoiceCommand(event.results[0].transcript);
+        }
+    });
+    useSpeechRecognitionEvent('error', (event: any) => {
+        console.error('Speech error:', event.error);
+        setIsListening(false);
+    });
+
+    const handleMicPress = async () => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
+        if (isListening) {
+            // Agar allaqachon eshitayotgan bo'lsa — to'xtatish
+            if (Platform.OS !== 'web') {
+                ExpoSpeechRecognitionModule.stop();
+            }
+            setIsListening(false);
+            return;
+        }
+
         if (Platform.OS === 'web') {
+            // Web uchun eskicha Web Speech API
             const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
             if (SpeechRecognition) {
-                if (isListening) return;
-
                 const recognition = new SpeechRecognition();
                 recognition.lang = language === 'uz' ? 'uz-UZ' : 'ru-RU';
                 recognition.continuous = false;
                 recognition.interimResults = false;
-
-                recognition.onstart = () => {
-                    setIsListening(true);
-                };
-
+                recognition.onstart = () => setIsListening(true);
                 recognition.onresult = (event: any) => {
-                    const transcript = event.results[0][0].transcript.toLowerCase();
-                    console.log('Eshitdim:', transcript);
-
-                    // Oddiy buyruqlar tahlili:
-                    if (transcript.includes('chiroq') || transcript.includes('свет') || transcript.includes('oshxona')) {
-                        if (transcript.includes('yoq') || transcript.includes('включ')) {
-                            sendDeviceCommand('tuya_light_1', { turnOn: true });
-                        } else if (transcript.includes('o\'chir') || transcript.includes('o’chir') || transcript.includes('ochir') || transcript.includes('выключ')) {
-                            sendDeviceCommand('tuya_light_1', { turnOn: false });
-                        } else {
-                            const light = devices['tuya_light_1'];
-                            if (light) sendDeviceCommand('tuya_light_1', { turnOn: !light.isOn });
-                        }
-                    } else if (transcript.includes('muzlatkich') || transcript.includes('muzlatgich') || transcript.includes('холодильник')) {
-                        if (transcript.includes('yoq') || transcript.includes('включ')) {
-                            sendDeviceCommand('tuya_plug_1', { turnOn: true });
-                        } else if (transcript.includes('o\'chir') || transcript.includes('o’chir') || transcript.includes('ochir') || transcript.includes('выключ')) {
-                            sendDeviceCommand('tuya_plug_1', { turnOn: false });
-                        } else {
-                            const plug = devices['tuya_plug_1'];
-                            if (plug) sendDeviceCommand('tuya_plug_1', { turnOn: !plug.isOn });
-                        }
-                    }
-
+                    processVoiceCommand(event.results[0][0].transcript);
                     setIsListening(false);
                 };
-
-                recognition.onerror = (event: any) => {
-                    console.error('Speech error:', event.error);
-                    setIsListening(false);
-                };
-
-                recognition.onend = () => {
-                    setIsListening(false);
-                };
-
+                recognition.onerror = () => setIsListening(false);
+                recognition.onend = () => setIsListening(false);
                 recognition.start();
             } else {
                 alert(t.offline);
             }
         } else {
-            alert(language === 'uz' ? "Ovozli boshqaruv hozir faqat Web versiyada ishlaydi." : "Голосовое управление пока работает только в Web версии.");
+            // Native Android/iOS uchun expo-speech-recognition
+            const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+            if (!result.granted) {
+                alert(language === 'uz' ? 'Mikrofon va ovoz tanish uchun ruxsat bering!' : 'Дайте разрешение на микрофон!');
+                return;
+            }
+            ExpoSpeechRecognitionModule.start({
+                lang: language === 'uz' ? 'uz-UZ' : 'ru-RU',
+                interimResults: false,
+                continuous: false,
+            });
         }
     };
 
